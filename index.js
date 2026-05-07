@@ -1,9 +1,19 @@
 import { config } from "dotenv";
 config();
+import http from "http";
 import { Client, GatewayIntentBits } from "discord.js";
-
 import { ChatGoogle } from "@langchain/google";
 import { HumanMessage, SystemMessage } from "langchain";
+
+// Keep-alive server
+const keepAliveServer = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Rika Bot is alive!");
+});
+
+keepAliveServer.listen(process.env.PORT || 3000, () => {
+  console.log(`Keep-alive server running on port ${process.env.PORT || 3000}`);
+});
 
 const client = new Client({
   intents: [
