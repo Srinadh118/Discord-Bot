@@ -1,0 +1,21 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "A discord bot that uses AI to respond to the end user",
+  "keywords": [
+    "discord",
+    "bot",
+    "AI",
+    "automation"
+  ],
+  "license": "ISC",
+  "author": "Srinadh",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^14.26.4"
+  }
+}
