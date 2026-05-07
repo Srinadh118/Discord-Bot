@@ -92,13 +92,13 @@ client.on("messageCreate", async (message) => {
   //default to flash lite model
   const modelName = global.currentModel || "gemini-2.5-flash-lite";
 
-  await message.channel.sendTyping();
-
-  const typingInterval = setInterval(() => {
-    message.channel.sendTyping().catch(() => {});
-  }, 8000);
-
+  let typingInterval = null;
   try {
+    await message.channel.sendTyping();
+
+    typingInterval = setInterval(() => {
+      message.channel.sendTyping().catch(() => {});
+    }, 8000);
     const model = new ChatGoogle({
       apiKey: process.env.GEMINI_API_KEY,
       model: modelName,
@@ -118,6 +118,11 @@ client.on("messageCreate", async (message) => {
       new HumanMessage(userInput),
     ]);
 
+    if (typingInterval) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+    }
+
     // message.reply(modelResponse.text);
     let text = modelResponse.text;
 
@@ -135,15 +140,20 @@ client.on("messageCreate", async (message) => {
     }
 
     await message.reply(text);
-    clearInterval(typingInterval);
-    await message.channel.sendTyping(false);
   } catch (error) {
-    clearInterval(typingInterval);
-
+    if (typingInterval) {
+      clearInterval(typingInterval);
+    }
     console.log("Error: ", error);
-    message.reply(
-      "Something went wrong while thinking 😅. Likely your Quota is up, try changing the model with /model command.",
-    );
+    message
+      .reply(
+        "Something went wrong while thinking 😅. Likely your Quota is up, try changing the model with /model command.",
+      )
+      .catch(() => {});
+  } finally {
+    if (typingInterval) {
+      clearInterval(typingInterval);
+    }
   }
 });
 
